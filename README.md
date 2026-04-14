@@ -9,18 +9,6 @@ The first version focuses on two distance-based metrics:
 
 The app converts each distance into a normalized proximity score, applies user-defined weights, and visualizes the result on an interactive map and ranking table.
 
-## Why this is a strong Appsilon-style portfolio piece
-
-This project is intentionally shaped around several skills Appsilon highlights for R/Shiny developers:
-
-- Building attractive, interactive Shiny apps
-- Organizing code into reusable helpers instead of one giant `app.R`
-- Writing testable business logic
-- Using Git-friendly project structure
-- Preparing a prototype that can later grow into a more production-ready app
-
-Appsilon's article also points junior candidates toward `Advanced R`, `Mastering Shiny`, `Engineering Production-Grade Shiny Apps`, and practice with `shiny.semantic` / `shiny.fluent`.
-
 ## Project structure
 
 - [app.R](C:/Users/MF/Documents/New%20project/app.R)
@@ -59,11 +47,4 @@ The dataset in [data/latvia_demo_areas.csv](C:/Users/MF/Documents/New%20project/
 5. Add CI with GitHub Actions and deployment on Posit Connect or shinyapps.io.
 6. Rebuild the UI once with `shiny.fluent` or `shiny.semantic` to show Appsilon-adjacent experience.
 
-## Suggested learning roadmap for the Appsilon goal
 
-1. Finish and polish this app until it feels like a genuine portfolio piece.
-2. Study `Advanced R` to get stronger with functions, environments, and debugging.
-3. Work through `Mastering Shiny` and then `Engineering Production-Grade Shiny Apps`.
-4. Learn Git beyond the basics: branching, rebasing, pull requests, and code review habits.
-5. Add automated tests and CI to this repo.
-6. Build one second app with a different flavor, such as a clinical dashboard, explainable ML app, or multi-page business tool.
