@@ -14,7 +14,7 @@ That makes the app easy to understand, but the scoring engine is intentionally w
 This app serves two goals at once:
 
 1. Build a practical geographic scoring tool for Latvia.
-2. Create a strong portfolio piece for R/Shiny developer roles such as the ones Appsilon hires for.
+2. Create a strong portfolio piece for R/Shiny developer roles.
 
 It demonstrates several habits that matter in real Shiny work:
 
@@ -73,13 +73,9 @@ The current data file is a prototype dataset used to validate the interaction de
 & "C:\Program Files\R\R-4.1.1\bin\Rscript.exe" tests/testthat.R
 ```
 
-## Why this fits an Appsilon-style portfolio
+## Why this works as a portfolio project
 
-Appsilon's R/Shiny career guidance highlights more than just getting an app to render. It points toward strong R fundamentals, good UI instincts, reusable code, Git fluency, testing, and product thinking. This project is intentionally aligned to that direction.
-
-Relevant reference:
-
-- [How to Start a Career as an R Shiny Developer](https://www.appsilon.com/post/how-to-start-a-career-as-an-r-shiny-developer)
+Strong Shiny portfolio projects show more than a working UI. They demonstrate solid R fundamentals, clean code structure, testing habits, clear product thinking, and an ability to turn a simple idea into something extensible. This project is designed with that in mind.
 
 ## Good next upgrades
 
@@ -88,7 +84,7 @@ Relevant reference:
 3. Add more scoring dimensions and let users rebalance all of them dynamically.
 4. Add snapshot tests and reactive tests.
 5. Add GitHub Actions for checks and deployment.
-6. Rebuild the UI once with `shiny.fluent`, `shiny.semantic`, or Rhino for broader Appsilon-relevant experience.
+6. Rebuild the UI once with an alternative component framework or app structure to broaden the project range.
 
 ## Learning roadmap
 
