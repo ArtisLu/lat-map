@@ -1,4 +1,4 @@
-required_packages <- c("shiny", "leaflet", "DT", "testthat")
+required_packages <- c("shiny", "leaflet", "DT", "sf", "testthat")
 
 missing_packages <- required_packages[
   !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)

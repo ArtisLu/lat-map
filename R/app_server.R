@@ -1,6 +1,7 @@
 build_app_server <- function() {
   function(input, output, session) {
     raw_data <- load_latvia_demo_data()
+    latvia_boundary <- load_latvia_boundary()
 
     shiny::observe({
       shiny::updateSelectInput(
@@ -23,9 +24,14 @@ build_app_server <- function() {
 
     filtered_data <- shiny::reactive({
       data <- raw_data
+      selected_region <- input$planning_region
 
-      if (!is.null(input$planning_region) && !identical(input$planning_region, "All Latvia")) {
-        data <- data[data$planning_region == input$planning_region, , drop = FALSE]
+      if (is.null(selected_region) || length(selected_region) == 0 || identical(selected_region, "")) {
+        selected_region <- "All Latvia"
+      }
+
+      if (!identical(selected_region, "All Latvia")) {
+        data <- data[data$planning_region == selected_region, , drop = FALSE]
       }
 
       data
@@ -39,8 +45,17 @@ build_app_server <- function() {
       )
     })
 
+    surface_data <- shiny::reactive({
+      generate_score_surface(scored_data(), lat_cells = 20, lng_cells = 26)
+    })
+
+    masked_surface <- shiny::reactive({
+      filter_surface_to_boundary(surface_data(), latvia_boundary)
+    })
+
     output$best_area_card <- shiny::renderUI({
       scored <- scored_data()
+      shiny::req(nrow(scored) > 0)
       best_area <- scored$area_name[1]
       best_score <- sprintf("%.1f / 100", scored$overall_score[1])
 
@@ -53,6 +68,7 @@ build_app_server <- function() {
 
     output$score_span_card <- shiny::renderUI({
       scored <- scored_data()
+      shiny::req(nrow(scored) > 0)
       score_span <- sprintf(
         "%.1f to %.1f",
         min(scored$overall_score),
@@ -80,10 +96,13 @@ build_app_server <- function() {
 
     output$score_map <- leaflet::renderLeaflet({
       scored <- scored_data()
+      surface <- masked_surface()
+      shiny::req(nrow(scored) > 0, nrow(surface) > 0)
       palette <- leaflet::colorNumeric(
         palette = c("#b11226", "#f3c623", "#1a8f5f"),
-        domain = scored$overall_score
+        domain = c(0, 100)
       )
+      boundary_bbox <- sf::st_bbox(latvia_boundary)
 
       labels <- sprintf(
         paste(
@@ -102,17 +121,41 @@ build_app_server <- function() {
 
       label_text <- if (isTRUE(input$show_labels)) scored$area_name else NULL
 
-      leaflet::leaflet(scored) |>
-        leaflet::addProviderTiles(leaflet::providers$CartoDB.Positron) |>
+      leaflet::leaflet() |>
+        leaflet::fitBounds(
+          lng1 = unname(boundary_bbox["xmin"]),
+          lat1 = unname(boundary_bbox["ymin"]),
+          lng2 = unname(boundary_bbox["xmax"]),
+          lat2 = unname(boundary_bbox["ymax"])
+        ) |>
+        leaflet::addRectangles(
+          data = surface,
+          lng1 = ~lng_min,
+          lat1 = ~lat_min,
+          lng2 = ~lng_max,
+          lat2 = ~lat_max,
+          stroke = FALSE,
+          fillOpacity = 0.6,
+          fillColor = ~palette(surface_score),
+          popup = ~popup_label
+        ) |>
+        leaflet::addPolygons(
+          data = latvia_boundary,
+          fill = FALSE,
+          color = "#12343b",
+          weight = 2,
+          opacity = 0.9
+        ) |>
         leaflet::addCircleMarkers(
+          data = scored,
           lng = ~lng,
           lat = ~lat,
-          radius = ~6 + (overall_score / 18),
+          radius = ~4 + (overall_score / 25),
           stroke = TRUE,
           weight = 1,
           color = "#ffffff",
           opacity = 1,
-          fillOpacity = 0.9,
+          fillOpacity = 1,
           fillColor = ~palette(overall_score),
           popup = labels,
           label = label_text
@@ -120,13 +163,14 @@ build_app_server <- function() {
         leaflet::addLegend(
           position = "bottomright",
           pal = palette,
-          values = ~overall_score,
-          title = "Score"
+          values = c(0, 100),
+          title = "Surface score"
         )
     })
 
     output$ranking_plot <- shiny::renderPlot({
       scored <- scored_data()
+      shiny::req(nrow(scored) > 0)
       top_n <- min(input$top_n, nrow(scored))
       top_scores <- scored[seq_len(top_n), ]
 
@@ -149,6 +193,7 @@ build_app_server <- function() {
 
     output$ranking_table <- DT::renderDT({
       scored <- scored_data()
+      shiny::req(nrow(scored) > 0)
       display_table <- scored[
         ,
         c(

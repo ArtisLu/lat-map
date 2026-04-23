@@ -149,7 +149,8 @@ build_app_ui <- function() {
             shiny::selectInput(
               inputId = "planning_region",
               label = "Planning region",
-              choices = NULL
+              choices = "All Latvia",
+              selected = "All Latvia"
             ),
             shiny::sliderInput(
               inputId = "top_n",
@@ -167,14 +168,14 @@ build_app_ui <- function() {
           ),
           shiny::div(
             class = "panel-soft",
-            shiny::div(class = "sidebar-title", "Portfolio Angle"),
+            shiny::div(class = "sidebar-title", "About This Prototype"),
             shiny::tags$p(
-              "This project is intentionally scoped as a portfolio piece: it mixes spatial thinking,",
-              "reactive UI, scoring logic, and testable helper functions."
+              "This project combines spatial thinking, reactive controls, and a transparent scoring",
+              "formula so you can experiment with how place-based weights affect results across Latvia."
             ),
             shiny::tags$p(
-              "That aligns well with Appsilon's emphasis on attractive Shiny apps, testing, shipping",
-              "features independently, and strong engineering habits."
+              "The current version uses demo service-distance inputs, but the same structure can be",
+              "extended with richer real-world geographic data."
             )
           )
         ),
@@ -195,7 +196,7 @@ build_app_ui <- function() {
                 leaflet::leafletOutput("score_map", height = "560px"),
                 shiny::div(
                   class = "legend-note",
-                  "Green areas score higher under the chosen weights. Red areas score lower."
+                  "The shaded surface is interpolated from the scored locations and clipped to the Latvia boundary."
                 )
               )
             ),
